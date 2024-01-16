@@ -1,78 +1,104 @@
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+/* Reset some default styles */
+body,
+h1,
+h2,
+h3,
+p,
+ul {
+    margin: 0;
+    padding: 0;
 }
 
-.save-note, .new-note, .clear-btn {
-  display: none;
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container-fluid {
+    margin-top: 20px;
+}
+
+.card {
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    background-color: #17a2b8;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .icons {
-  margin-left: 15px;
-  margin-right: 15px;
-  font-size: 1.5rem;
-  cursor: pointer;
+    margin-left: auto;
 }
 
-.note-textarea,
-.note-title {
-  color: #000000;
-  width: 100%;
-  outline: none;
-  border: none;
+.btn-outline-light {
+    color: #17a2b8;
+    border-color: #17a2b8;
 }
 
-.note-textarea {
-  resize: none;
-  height: calc(100% - 63px);
-  padding-top: 15px;
-}
-
-.note-title {
-  height: 50px;
-  margin-top: 13px;
-  font-size: 3rem;
-}
-
-.note-title:read-only,
-.note-textarea:read-only {
-  color: #757575;
-}
-
-.list-container .card {
-  height: calc(100vh - 70px);
-  border-bottom: none;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+.btn-outline-light:hover {
+    background-color: #17a2b8;
+    color: #fff;
 }
 
 .list-container {
-  padding-left: 0;
+    padding: 20px;
 }
 
-.list-container .list-group,
-.list-container .list-group-item:first-child,
-.list-container .card {
-  border-top: none;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
+.list-group-item {
+    border: 0;
+    border-bottom: 1px solid #e9ecef;
 }
 
 .list-item-title {
-  display: inline-block;
-  width: 75%;
+    cursor: pointer;
 }
 
-.list-container i {
-  font-size: 1.1rem;
-  cursor: pointer;
+.note-form {
+    padding: 20px;
 }
 
-.list-container .list-group-item {
-  border-left: none;
-  border-right: none;
-  padding: 20px;
-  cursor: pointer;
+.note-title,
+.note-textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.note-textarea {
+    resize: vertical;
+}
+
+.save-note,
+.new-note,
+.clear-btn {
+    margin-right: 10px;
+}
+
+.float-right {
+    float: right;
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+    .icons {
+        margin-top: 10px;
+    }
+
+    .note-form {
+        padding: 10px;
+    }
+
+    .note-title,
+    .note-textarea {
+        margin-bottom: 5px;
+    }
 }
