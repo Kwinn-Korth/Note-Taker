@@ -3,6 +3,7 @@ let noteTitle;
 let noteText;
 let saveNoteBtn;
 let newNoteBtn;
+let clearBtn;
 let noteList;
 
 if (window.location.pathname === '/notes') {
@@ -108,7 +109,7 @@ const handleNoteView = (e) => {
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
+// Sets the activeNote to an empty object and allows the user to enter a new note
 const handleNewNoteView = (e) => {
   activeNote = {};
   show(clearBtn);
@@ -129,55 +130,75 @@ const handleRenderBtns = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
-  let jsonNotes = await notes.json();
-  if (window.location.pathname === '/notes') {
-    noteList.forEach((el) => (el.innerHTML = ''));
-  }
+  try {
+    let jsonNotes = await notes.json();
 
-  let noteListItems = [];
+    // Log the received JSON to understand its structure
+    console.log('Received JSON:', jsonNotes);
 
-  // Returns HTML element with or without a delete button
-  const createLi = (text, delBtn = true) => {
-    const liEl = document.createElement('li');
-    liEl.classList.add('list-group-item');
+    if (Array.isArray(jsonNotes)) {
+      // If the response is an array, proceed with rendering
+      if (window.location.pathname === '/notes') {
+        noteList.forEach((el) => (el.innerHTML = ''));
+      }
 
-    const spanEl = document.createElement('span');
-    spanEl.classList.add('list-item-title');
-    spanEl.innerText = text;
-    spanEl.addEventListener('click', handleNoteView);
+      let noteListItems = [];
 
-    liEl.append(spanEl);
+      // Returns HTML element with or without a delete button
+      const createLi = (text, delBtn = true) => {
+        const liEl = document.createElement('li');
+        liEl.classList.add('list-group-item');
 
-    if (delBtn) {
-      const delBtnEl = document.createElement('i');
-      delBtnEl.classList.add(
-        'fas',
-        'fa-trash-alt',
-        'float-right',
-        'text-danger',
-        'delete-note'
-      );
-      delBtnEl.addEventListener('click', handleNoteDelete);
+        const spanEl = document.createElement('span');
+        spanEl.classList.add('list-item-title');
+        spanEl.innerText = text;
+        spanEl.addEventListener('click', handleNoteView);
 
-      liEl.append(delBtnEl);
+        liEl.append(spanEl);
+
+        if (delBtn) {
+          const delBtnEl = document.createElement('i');
+          delBtnEl.classList.add(
+            'fas',
+            'fa-trash-alt',
+            'float-right',
+            'text-danger',
+            'delete-note'
+          );
+          delBtnEl.addEventListener('click', handleNoteDelete);
+
+          liEl.append(delBtnEl);
+        }
+
+        return liEl;
+      };
+
+      if (jsonNotes.length === 0) {
+        noteListItems.push(createLi('No saved Notes', false));
+      } else {
+        jsonNotes.forEach((note) => {
+          const li = createLi(note.title);
+          li.dataset.note = JSON.stringify(note);
+
+          noteListItems.push(li);
+        });
+      }
+
+      if (window.location.pathname === '/notes') {
+        noteListItems.forEach((note) => noteList[0].append(note));
+      }
+    } else {
+      // If the response is an object, display a message on the page
+      const errorMessage = document.createElement('div');
+      errorMessage.innerHTML = 'Unable to render notes. Unexpected data format.';
+      errorMessage.classList.add('alert', 'alert-danger', 'mt-3');
+      document.querySelector('.col-8').appendChild(errorMessage);
+
+      // Log a warning about the unexpected response structure
+      console.warn('Received a non-array response. Unable to render notes.');
     }
-
-    return liEl;
-  };
-
-  if (jsonNotes.length === 0) {
-    noteListItems.push(createLi('No saved Notes', false));
-  }
-
-  jsonNotes.forEach((note) => {
-    const li = createLi(note.title);
-    li.dataset.note = JSON.stringify(note);
-
-    noteListItems.push(li);
-  });
-
-  if (window.location.pathname === '/notes') {
-    noteListItems.forEach((note) => noteList[0].append(note));
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
   }
 };
 
