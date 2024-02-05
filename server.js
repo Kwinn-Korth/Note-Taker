@@ -27,7 +27,7 @@ app.get('/assets/js/index.js', (req, res) => {
 
 // API route to get notes
 app.get('/api/notes', (req, res) => {
-  const dbFilePath = path.join(__dirname, 'db.json');
+  const dbFilePath = path.join(__dirname, 'db', 'db.json');
 
   // Read the contents of db.json
   fs.readFile(dbFilePath, 'utf8', (err, data) => {
@@ -48,6 +48,43 @@ app.get('/api/notes', (req, res) => {
     }
   });
 });
+
+// API route to save a new note
+app.post('/api/notes', (req, res) => {
+  const dbFilePath = path.join(__dirname, 'db', 'db.json');
+
+  // Read the contents of db.json
+  fs.readFile(dbFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading db.json:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    try {
+      // Parse the JSON data to get an array of notes
+      const notes = JSON.parse(data);
+
+      // Add the new note to the array
+      const newNote = req.body;
+      notes.push(newNote);
+
+      // Write the updated notes back to db.json
+      fs.writeFile(dbFilePath, JSON.stringify(notes), (writeErr) => {
+        if (writeErr) {
+          console.error('Error writing to db.json:', writeErr);
+          return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        // Send a success response
+        res.json(newNote);
+      });
+    } catch (parseError) {
+      console.error('Error parsing db.json:', parseError);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+});
+
 // Add other routes as needed
 
 app.listen(PORT, () => {

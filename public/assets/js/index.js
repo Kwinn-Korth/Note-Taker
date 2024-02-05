@@ -73,15 +73,29 @@ const renderActiveNote = () => {
   }
 };
 
-const handleNoteSave = () => {
-  const newNote = {
-    title: noteTitle.value,
-    text: noteText.value
-  };
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
+const handleNoteSave = async () => {
+  try {
+    console.log('Save Note button clicked');
+
+    const newNote = {
+      title: noteTitle.value,
+      text: noteText.value
+    };
+
+    // Save the note and wait for the response
+    await saveNote(newNote);
+
+    // After saving, get and render the updated notes
+    await getAndRenderNotes();
+
+    // Render the active note
     renderActiveNote();
-  });
+  } catch (error) {
+    console.error('Error in handleNoteSave:', error);
+
+    // You can add additional error handling here, such as displaying an alert
+    // or updating the UI to inform the user about the error.
+  }
 };
 
 // Delete the clicked note
@@ -104,6 +118,7 @@ const handleNoteDelete = (e) => {
 
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
+  console.log('')
   e.preventDefault();
   activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
   renderActiveNote();
@@ -205,11 +220,29 @@ const renderNoteList = async (notes) => {
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
+console.log('HELLO THERE!');
+
 if (window.location.pathname === '/notes') {
-  saveNoteBtn.addEventListener('click', handleNoteSave);
-  newNoteBtn.addEventListener('click', handleNewNoteView);
-  clearBtn.addEventListener('click', renderActiveNote);
-  noteForm.addEventListener('input', handleRenderBtns);
+  saveNoteBtn.addEventListener('click', () => {
+    console.log('Save Note button clicked');
+    handleNoteSave();
+  });
+  
+  newNoteBtn.addEventListener('click', () => {
+    console.log('New Note button clicked');
+    handleNewNoteView();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    console.log('Clear Form button clicked');
+    renderActiveNote();
+  });
+
+  noteForm.addEventListener('input', () => {
+    console.log('Input detected');
+    handleRenderBtns();
+  });
 }
+
 
 getAndRenderNotes();
